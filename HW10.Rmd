@@ -1,0 +1,55 @@
+---
+title: "HW10"
+author: "Pin-wei, Yu"
+date: "6/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Description
+Using simulated annealing to find the maximun point of $0.2+x_1^2+x_2^2-0.1*cos(6*pi*x_1)-0.1*cos(6*pi*x_2)$
+
+set lambda as log(1+n)
+
+proposal y1,y2 follow uniform(0,1)
+
+set the domain of x1,x2 on (0,1)
+
+```{r}
+set.seed(11)
+Target_Function <- function(x_1,x_2){
+  return(0.2+x_1^2+x_2^2-0.1*cos(6*pi*x_1)-0.1*cos(6*pi*x_2))
+}
+
+n <-0
+x1<-0.8
+x2<-0.8
+Y1<-c()
+Y2<-c()
+Target <-c()
+while(n < 1000000){
+  denominator <- (1+n)^Target_Function(x1,x2)
+  y1<-runif(1,0,1)
+  y2<-runif(1,0,1)
+  fraction <- (1+n)^Target_Function(y1,y2)
+  alpha <- min((fraction/denominator),1)
+  if(runif(1,0,1)<alpha){
+    x1<-runif(1,y1,1)
+    x2<-runif(1,y2,1)
+    Y1<-c(Y1,y1)
+    Y2<-c(Y2,y2)
+  }
+  n=n+1
+}
+
+max_value <- max(Target_Function(Y1,Y2))
+tt <- which(Target_Function(Y1,Y2) == max_value)
+cat("The maximum point regarding x1 is:" , Y1[tt])
+cat("The maximum point regarding x2 is:" , Y2[tt])
+cat("The maximum value is:" , max_value)
+
+```
+
